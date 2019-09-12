@@ -24,23 +24,22 @@ class Ticket
  * @method create
  */
 
-  public function create($userId,$userDept,$title,$description,$requestBy,$requestDate,$deadline,$taskSize,$assigned,$status,$ticketNo)
+  public function create($userId,$clientName,$address,$phoneNumber,$sampleCollectionDate,$testName,$labName,$status,$orderNumber,$remarks)
   {
 
       try
       {
-        $stmt = $this->conn->prepare("INSERT INTO tickets (ticketNumber, userId, userDept, ticketDescription, ticketRequestedBy, ticketReqDate, ticketDeadline, ticketSize, ticketAssignedTo, ticketStatus, ticketComment) VALUES (:ticketNumber, :userId, :userDept, :ticketDescription, :ticketRequestedBy, :ticketReqDate, :ticketDeadline, :ticketSize, :ticketAssignedTo, :ticketStatus, :ticketComment)");
-        $stmt->bindParam(":ticketNumber", $ticketNo);
+        $stmt = $this->conn->prepare("INSERT INTO orders (orderNumber, userId, clientName, address, phoneNumber, collectionDate, testName, labName, status, remarks) VALUES (:orderNumber, :userId, :clientName, :address, :phoneNumber, :collectionDate, :testName, :labName, :status, :remarks)");
+        $stmt->bindParam(":orderNumber", $orderNumber);
         $stmt->bindParam(":userId", $userId);
-        $stmt->bindParam(":userDept", $userDept);
-        $stmt->bindParam(":ticketDescription", $description);
-        $stmt->bindParam(":ticketRequestedBy", $requestBy);
-        $stmt->bindParam(":ticketReqDate", $requestDate);
-        $stmt->bindParam(":ticketDeadline", $deadline);
-        $stmt->bindParam(":ticketSize", $taskSize);
-        $stmt->bindParam(":ticketAssignedTo", $assigned);
-        $stmt->bindParam(":ticketStatus", $status);
-        $stmt->bindParam(":ticketComment", $comment);
+        $stmt->bindParam(":clientName", $clientName);
+        $stmt->bindParam(":address", $address);
+        $stmt->bindParam(":phoneNumber", $phoneNumber);
+        $stmt->bindParam(":collectionDate", $sampleCollectionDate);
+        $stmt->bindParam(":testName", $testName);
+        $stmt->bindParam(":labName", $labName);
+        $stmt->bindParam(":status", $status);
+        $stmt->bindParam(":remarks", $remarks);
 
         if ($stmt->execute())
         {
@@ -92,25 +91,17 @@ class Ticket
    * @return [array]
    */
 
-    public function showAll($id,$userType)
+    public function showAll()
     {
       try {
-        if ($userType == 'Supervisor') {
-          $stmt = $this->conn->prepare("SELECT * FROM tickets WHERE userId = :userId AND ticketAssignedTo != :myId");
-          $stmt->execute(array(":userId" => $id, "myId" => $id));
 
-          $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-          return $data;
-        } else {
-          $stmt = $this->conn->prepare("SELECT * FROM tickets");
-          $stmt->execute(array(":userId" => $id));
+          $stmt = $this->conn->prepare("SELECT * FROM orders");
+          $stmt->execute();
 
           $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
           return $data;
         }
 
-
-      }
       catch (Exception $e) {
         echo $e->getMessage();
       }

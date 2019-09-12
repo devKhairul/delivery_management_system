@@ -30,17 +30,15 @@ class User
  * @return [boolean]
  */
 
-  public function create($supervisorId,$name,$email,$password,$userDept,$userType)
+  public function create($name,$email,$password,$userType)
   {
 
       try
       {
-        $stmt = $this->conn->prepare("INSERT INTO users (supervisorId, userName, userEmail, userPassword, userDept, userType) VALUES(:supervisorId, :userName, :userEmail, :userPassword, :userDept, :userType)");
-        $stmt->bindParam(":supervisorId", $supervisorId);
+        $stmt = $this->conn->prepare("INSERT INTO users (userName, userEmail, userPassword, userType) VALUES(:userName, :userEmail, :userPassword, :userType)");
         $stmt->bindParam(":userName", $name);
         $stmt->bindParam(":userEmail", $email);
         $stmt->bindParam(":userPassword", $password);
-        $stmt->bindParam(":userDept", $userDept);
         $stmt->bindParam(":userType", $userType);
 
         if ($stmt->execute())
@@ -147,32 +145,15 @@ class User
    * @return [array]
    */
 
-    public function showAll($userType, $userDept, $supervisorId)
+    public function showAll()
     {
-      $userType = $userType;
-      $userDept = $userDept;
+      $stmt = $this->conn->prepare("SELECT * FROM users");
+      $stmt->execute();
 
-      if ($userType == 'Administrator')
-      {
-        $stmt = $this->conn->prepare("SELECT * FROM users");
-        $stmt->execute();
+      $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      return $data;
+     }
 
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $data;
-      }
-      else
-      {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE supervisorId = :supervisorId AND userType != 'Administrator' AND userType != 'Executive'");
-        $stmt->bindParam(":supervisorId", $supervisorId);
-        $stmt->execute();
-
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $data;
-
-      }
-
-
-    }
 
     /**
      * Logout from admin

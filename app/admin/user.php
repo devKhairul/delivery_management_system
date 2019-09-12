@@ -16,6 +16,9 @@
   $user = new User($db);
 
 
+  // Get redirect code from query string
+  $userCreated = $_GET['m'];
+
   /**
    * Update user account status
    * @author Khairul Alam
@@ -41,14 +44,13 @@
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $userType = $_POST['role'];
-    $userDept = $_POST['dept'];
 
     //check if email exists
 
     $stmt = $db->prepare("SELECT * FROM users WHERE userEmail=:userEmail");
     $stmt->execute(array(":userEmail" => $email));
 
-    if ($stmt->rowCount() > 1)
+    if ($stmt->rowCount() >= 1)
     {
       $emailExists = 'true';
     }
@@ -56,12 +58,12 @@
     // create record
     if (!isset($emailExists))
     {
-      if ($user->create($supervisorId,$name,$email,$password,$userDept,$userType))
+      if ($user->create($name,$email,$password,$userType))
       {
-        $submit = 'true';
+        $userSuccess = 'true';
       } else
       {
-        $failed = 'true';
+        $userFailed = 'true';
       }
     }
 
@@ -83,15 +85,10 @@
 
         <div class="row">
           <div class="col-md-12">
-            <?php if (isset($submit)) { ?>
+            <?php if (isset($userSuccess)) { ?>
               <div class="alert alert-success alert-dismissible">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>Success!</strong> user account created successfully.
-              </div>
-            <?php } elseif (isset($failed)) { ?>
-              <div class="alert alert-danger alert-dismissible">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <strong>Sorry.</strong> something went wrong.
               </div>
             <?php } elseif (isset($emailExists)) { ?>
               <div class="alert alert-danger alert-dismissible">
@@ -115,7 +112,6 @@
                                   <th>Sl.</th>
                                   <th>Name</th>
                                   <th>Email</th>
-                                  <th>Department</th>
                                   <th>Role</th>
                                   <th>Action</th>
                               </tr>
@@ -128,7 +124,6 @@
                                   <td><?php echo $i++; ?></td>
                                   <td><?php echo $val['userName']; ?></td>
                                   <td><?php echo $val['userEmail']; ?></td>
-                                  <td><?php echo $val['userDept']; ?></td>
                                   <td><?php echo $val['userType']; ?></td>
 
 
@@ -190,31 +185,16 @@
                                             <span class="help-block field-validation-valid" data-valmsg-for="cc-name" data-valmsg-replace="true"></span>
                                         </div>
 
-
-                                        <div class="form-group">
-                                            <label for="select" class="form-control-label"><strong>Department</strong> </label>
-                                            <select name="dept" id="select" class="form-control" required>
-                                                <option value="" selected><small><strong>Select Department</strong></small></option>
-                                                <option value="Communication">Communication</option>
-                                                <option value="IT">IT</option>
-                                                <option value="MIS">MIS</option>
-                                            </select>
-                                        </div>
-
                                         <div class="form-group">
                                             <label for="select" class="form-control-label"><strong>Role</strong> </label>
                                             <select name="role" id="select" class="form-control" required>
                                                 <option value="" selected><small><strong>Select Role</strong></small></option>
 
-                                                <?php if ($userType == 'Administrator'): ?>
-
-                                                <option value="Administrator">Administrator</option>
-                                                <option value="Executive">Executive</option>
-
-                                                <?php endif; ?>
-
-                                                <option value="Supervisor">Supervisor</option>
-                                                <option value="User">User</option>
+                                                <option value="CCC">Customer Care Center</option>
+                                                <option value="SC">Sample Collector</option>
+                                                <option value="OPSM">Operational Manager</option>
+                                                <option value="MGM">Management</option>
+                                                <option value="SU">Super User</option>
 
 
                                             </select>

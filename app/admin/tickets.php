@@ -7,7 +7,6 @@ require_once('objects/Ticket.php');
 
 $userId = $_SESSION['userId'];
 $username = $_SESSION['userName'];
-$userDept = $_SESSION['userDept'];
 
 // Initiate database connection
 $database = new DB();
@@ -25,28 +24,27 @@ $ticket = new Ticket($db);
  */
 if(isset($_POST['submit']))
 {
-  $title = $_POST['title'];
-  $description = $_POST['description'];
-  $requestBy = $_POST['requestBy'];
-  $requestDate = $_POST['requestDate'];
-  $deadline = $_POST['deadline'];
-  $taskSize = $_POST['taskSize'];
-  $assigned = $_POST['assignedTo'];
+  $clientName = $_POST['client_name'];
+  $address = $_POST['address'];
+  $phoneNumber = $_POST['phone_number'];
+  $sampleCollectionDate = $_POST['sample_c_date'];
+  $testName = $_POST['test_name'];
+  $labName = $_POST['lab_name'];
   $status = $_POST['status'];
-  $comment = $_POST['comment'];
+  $remarks = $_POST['remarks'];
 
-  $stmt = $db->prepare("SELECT ticketNumber FROM tickets ORDER BY ticketId DESC LIMIT 1");
+  $stmt = $db->prepare("SELECT orderNumber FROM orders ORDER BY orderId DESC LIMIT 1");
   $stmt->execute();
   $tNo = $stmt->fetch(PDO::FETCH_ASSOC);
 
   if (empty($tNo))
   {
-    $ticketNo = "SFT000001";
+    $orderNumber = "ALAB0000001";
   } else {
-    $ticketNo = ++$tNo['ticketNumber'];
+    $orderNumber = ++$tNo['orderNumber'];
   }
 
-  if ($ticket->create($userId, $userDept, $title,$description,$requestBy,$requestDate,$deadline,$taskSize,$assigned,$status,$ticketNo,$comment))
+  if ($ticket->create($userId,  $clientName,$address,$phoneNumber,$sampleCollectionDate, $testName,$labName,$status,$orderNumber,$remarks))
   {
     $success = 'true';
   } else {
@@ -67,8 +65,8 @@ if(isset($_POST['submit']))
  /**
   * Get assigned to name list
   */
-  $stmt = $db->prepare("SELECT * FROM users WHERE supervisorId = :supervisorId");
-  $stmt->execute(array("supervisorId" => $userId));
+  $stmt = $db->prepare("SELECT * FROM users");
+  $stmt->execute();
   $userData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
@@ -76,9 +74,9 @@ if(isset($_POST['submit']))
    * Get task size list
    *
    */
-   $stmt = $db->prepare("SELECT * FROM tasks_size");
+   $stmt = $db->prepare("SELECT * FROM labs");
    $stmt->execute();
-   $tasksSize = $stmt->fetchAll(PDO::FETCH_ASSOC);
+   $labs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -103,7 +101,7 @@ if(isset($_POST['submit']))
             <?php if (isset($success) && $success == 'true') { ?>
               <div class="alert alert-success alert-dismissible">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <strong>Success!</strong> ticket created successfully.
+                <strong>Success!</strong> order created successfully.
               </div>
             <?php } elseif (isset($failed)) { ?>
               <div class="alert alert-danger alert-dismissible">
@@ -121,60 +119,46 @@ if(isset($_POST['submit']))
               <div class="card">
 
                 <div class="card-body">
-                  <h3 class="card-title"><strong>OPEN A TICKET</strong></h3>
+                  <h3 class="card-title"><strong>Place Order</strong></h3>
                   <hr>
                   <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                     <div class="form-row">
                       <div class="form-group col-md-12">
-                        <label for="inputEmail4">Task Title</label>
-                        <input type="text" name="title" class="form-control" id="inputEmail4" required>
-                      </div>
-                    </div>
-
-                    <div class="form-row">
-                      <div class="form-group col-md-12">
-                        <label for="inputEmail4">Task Description</label>
-                        <textarea id="inputEmail4" name="description" class="form-control" rows="5"></textarea>
+                        <label for="inputEmail4">Client Name</label>
+                        <input type="text" name="client_name" class="form-control" id="inputEmail4" required>
                       </div>
                     </div>
 
                     <div class="form-row">
                       <div class="form-group col-md-4">
-                        <label for="inputPassword4">Requested by</label>
-                        <input type="text" name="requestBy" class="form-control" id="inputPassword4">
+                        <label for="inputPassword4">Address</label>
+                        <input type="text" name="address" class="form-control" id="inputPassword4">
                       </div>
                       <div class="form-group col-md-4">
-                        <label for="inputAddress">Request Date</label>
-                        <input type="date" name="requestDate" class="form-control" id="inputAddress">
+                        <label for="inputAddress">Phone Number</label>
+                        <input type="text" name="phone_number" class="form-control" id="inputAddress" pattern="\d*" maxlength="11">
                       </div>
                       <div class="form-group col-md-4">
-                        <label for="inputAddress2">Task Deadline</label>
-                        <input type="date" name="deadline" class="form-control" id="inputAddress2">
+                        <label for="inputAddress">Sample Collection Date</label>
+                        <input type="date" name="sample_c_date" class="form-control" id="date" data-provide="datepicker">
                       </div>
                     </div>
 
 
                     <div class="form-row">
                       <div class="form-group col-md-4">
-                        <label for="inputState">Task Size</label>
-                        <select name="taskSize" id="inputState" class="form-control" required>
+                        <label for="inputAddress2">Test Name</label>
+                        <input type="text" name="test_name" class="form-control" id="inputAddress2">
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label for="inputState">Lab</label>
+                        <select name="lab_name" id="inputState" class="form-control" required>
                           <option selected>......</option>
-                          <?php foreach ($tasksSize as $t) { ?>
-                            <option value="<?php echo $t['tasksSizeId'] ?>"><?php echo $t['tasksSizeName']; ?></option>
+                          <?php foreach ($labs as $t) { ?>
+                            <option value="<?php echo $t['labId'] ?>"><?php echo $t['labName']; ?></option>
                           <?php } ?>
 
-
-                        </select>
-                      </div>
-
-                      <div class="form-group col-md-4">
-                        <label for="inputState">Assigned To</label>
-                        <select name="assignedTo" id="inputState" class="form-control" required>
-                          <option selected>......</option>
-                            <option value="<?php echo $userId; ?>"><?php echo $username; ?></option>
-                          <?php foreach ($userData as $users) { ?>
-                            <option value="<?php echo $users['userId']; ?>"><?php echo $users['userName']; ?></option>
-                          <?php } ?>
 
                         </select>
                       </div>
@@ -194,8 +178,8 @@ if(isset($_POST['submit']))
 
                     <div class="form-row">
                       <div class="form-group col-md-12">
-                        <label for="comment">Comment</label>
-                        <textarea id="comment" name="comment" class="form-control" rows="5"></textarea>
+                        <label for="comment">Remarks <small>(optional)</small></label>
+                        <textarea id="comment" name="remarks" class="form-control" rows="5"></textarea>
                       </div>
                     </div>
 
@@ -214,9 +198,7 @@ if(isset($_POST['submit']))
           </div>
         </div>
 
-
-
-
         <div class="clearfix"></div>
+
 
 <?php require('footer.php'); ?>

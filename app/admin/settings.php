@@ -29,10 +29,6 @@ if (isset($_POST['update']))
     {
       $success = 'true';
     }
-    else
-    {
-      $failed = 'true';
-    }
   }
 }
 
@@ -48,10 +44,10 @@ if (isset($_POST['update']))
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>Success!</strong> account updated successfully.
               </div>
-            <?php } elseif (isset($failed)) { ?>
+            <?php } else { ?>
               <div class="alert alert-danger alert-dismissible">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <strong>Sorry.</strong> something went wrong.
+                <strong>Sorry.</strong> something went wrong. Please try again. 
               </div>
             <?php } ?>
           </div>

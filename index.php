@@ -29,21 +29,18 @@ if (isset($_POST['login']))
 			$userType = $userRow['userType'];
 			$userStatus = $userRow['userStatus'];
 
-			if (($userType === 'Administrator' || $userType === 'Executive' || $userType === 'Supervisor') && $userStatus == 'Active')
+			if (($userType === 'MGM' || $userType === 'OPSM' || $userType === 'SU') && $userStatus == 'Active')
 			{
 				$_SESSION['userName'] = $userRow['userName'];
 				$_SESSION['userId'] = $userRow['userId'];
 				$_SESSION['userType'] = $userRow['userType'];
-				$_SESSION['userDept'] = $userRow['userDept'];
 				header('location:app/admin');
 
-			} elseif ($userType === 'User' && $userStatus == 'Active')
+			} elseif (($userType === 'CCC' || $userType === 'SC') && $userStatus == 'Active')
 			{
 				$_SESSION['userName'] = $userRow['userName'];
 				$_SESSION['userId'] = $userRow['userId'];
 				$_SESSION['userType'] = $userRow['userType'];
-				$_SESSION['userDept'] = $userRow['userDept'];
-				$_SESSION['supervisorId'] = $userRow['supervisorId'];
 				header('location:app/user');
 			}
 

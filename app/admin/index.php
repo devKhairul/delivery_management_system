@@ -6,72 +6,72 @@
   $userType = $_SESSION['userType'];
 
 
-  if ($userType == 'Administrator')
+  if ($userType == 'MGM' || 'OPSM')
   {
     /**
-    * Fetch total tickets
+    * Fetch total orders
     */
-    $totalTicket = $db->query("SELECT count(*) FROM tickets")->fetchColumn();
+    $totalTicket = $db->query("SELECT count(*) FROM orders")->fetchColumn();
 
     /**
-    * Fetch total complete tickets
+    * Fetch total complete orders
     */
-    $completeTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '3'")->fetchColumn();
+    $completeorders = $db->query("SELECT count(*) FROM orders WHERE status = '3'")->fetchColumn();
 
     /**
-    * Fetch total in progress tickets
+    * Fetch total in progress orders
     */
-    $pendingTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '2'")->fetchColumn();
+    $pendingorders = $db->query("SELECT count(*) FROM orders WHERE status = '2'")->fetchColumn();
 
     /**
-    * Fetch total not-started tickets
+    * Fetch total not-started orders
     */
-    $waitingTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '1'")->fetchColumn();
-
-
-    /**
-    * Fetch delayed tickets
-    */
-    $delayedTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '4'")->fetchColumn();
+    $waitingorders = $db->query("SELECT count(*) FROM orders WHERE status = '1'")->fetchColumn();
 
 
     /**
-    * Fetch blocked tickets
+    * Fetch delayed orders
     */
-    $blockedTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '5'")->fetchColumn();
+    $delayedorders = $db->query("SELECT count(*) FROM orders WHERE status = '4'")->fetchColumn();
+
+
+    /**
+    * Fetch blocked orders
+    */
+    $blockedorders = $db->query("SELECT count(*) FROM orders WHERE status = '5'")->fetchColumn();
 
 
   } elseif ($userType == 'Supervisor') {
     /**
-    * Fetch total tickets
+    * Fetch total orders
     */
-    $totalTicket = $db->query("SELECT count(*) FROM tickets WHERE userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
+    $totalTicket = $db->query("SELECT count(*) FROM orders WHERE userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
 
     /**
-    * Fetch total complete tickets
+    * Fetch total complete orders
     */
-    $completeTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '3' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
+    $completeorders = $db->query("SELECT count(*) FROM orders WHERE status = '3' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
 
     /**
-    * Fetch total in progress tickets
+    * Fetch total in progress orders
     */
-    $pendingTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '2' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
+    $pendingorders = $db->query("SELECT count(*) FROM orders WHERE status = '2' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
 
     /**
-    * Fetch total not-started tickets
+    * Fetch total not-started orders
     */
-    $waitingTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '1' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
+    $waitingorders = $db->query("SELECT count(*) FROM orders WHERE status = '1' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
 
 
     /**
-    * Fetch delayed tickets
+    * Fetch delayed orders
     */
-    $delayedTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '4' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
+    $delayedorders = $db->query("SELECT count(*) FROM orders WHERE status = '4' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
 
     /**
-    * Fetch blocked tickets
+    * Fetch blocked orders
     */
-    $blockedTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '5' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
+    $blockedorders = $db->query("SELECT count(*) FROM orders WHERE status = '5' AND userId = $userId AND ticketAssignedTo != $userId")->fetchColumn();
 
   }
 
@@ -102,7 +102,7 @@
           ?>
 
 
-          <!-- dashboard assigned tickets  -->
+          <!-- dashboard assigned orders  -->
           <div class="row">
               <div class="col-lg-4 col-md-4">
                   <div class="card">
@@ -131,7 +131,7 @@
                               </div>
                               <div class="stat-content">
                                   <div class="text-left dib">
-                                      <div class="stat-text"><span><?php echo $completeTickets; ?></span></div>
+                                      <div class="stat-text"><span><?php echo $completeorders; ?></span></div>
                                       <div class="stat-heading">Complete</div>
                                   </div>
                               </div>
@@ -149,7 +149,7 @@
                               </div>
                               <div class="stat-content">
                                   <div class="text-left dib">
-                                      <div class="stat-text"><span><?php echo $pendingTickets; ?></span></div>
+                                      <div class="stat-text"><span><?php echo $pendingorders; ?></span></div>
                                       <div class="stat-heading">In-progress</div>
                                   </div>
                               </div>
@@ -171,7 +171,7 @@
                             </div>
                             <div class="stat-content">
                                 <div class="text-left dib">
-                                    <div class="stat-text"><span><?php echo $waitingTickets; ?></span></div>
+                                    <div class="stat-text"><span><?php echo $waitingorders; ?></span></div>
                                     <div class="stat-heading">Not Started</div>
                                 </div>
                             </div>
@@ -189,8 +189,8 @@
                             </div>
                             <div class="stat-content">
                                 <div class="text-left dib">
-                                    <div class="stat-text"><span><?php echo $delayedTickets; ?></span></div>
-                                    <div class="stat-heading">Delayed Tickets</div>
+                                    <div class="stat-text"><span><?php echo $delayedorders; ?></span></div>
+                                    <div class="stat-heading">Delayed orders</div>
                                 </div>
                             </div>
                         </div>
@@ -207,8 +207,8 @@
                             </div>
                             <div class="stat-content">
                                 <div class="text-left dib">
-                                    <div class="stat-text"><span><?php echo $blockedTickets; ?></span></div>
-                                    <div class="stat-heading">Blocked Tickets</div>
+                                    <div class="stat-text"><span><?php echo $blockedorders; ?></span></div>
+                                    <div class="stat-heading">Blocked orders</div>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +220,7 @@
           <!-- row 2 end section -->
           <!-- /Widgets -->
 
-          <!-- Delayed Tickets -->
+          <!-- Delayed orders -->
 
           <?php /*
 
@@ -229,7 +229,7 @@
                   <div class="col-lg-12">
                       <div class="card">
                           <div class="card-body">
-                              <h4 class="box-title">Delayed Tickets </h4>
+                              <h4 class="box-title">Delayed orders </h4>
                           </div>
                           <div class="card-body--">
                               <div class="table-stats order-table ov-h">
@@ -249,7 +249,7 @@
 
                                       <?php
 
-                                      $s=0; foreach($delayedTickets as $dt) {
+                                      $s=0; foreach($delayedorders as $dt) {
 
                                       $stmt = $db->prepare("SELECT userName FROM users WHERE userId = :ticketAssignedTo");
                                       $stmt->execute(array("ticketAssignedTo" => $dt['ticketAssignedTo']));
@@ -257,8 +257,8 @@
                                       $ticketAssignedName = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-                                      $stmt = $db->prepare("SELECT statusName FROM status WHERE statusId = :ticketStatus");
-                                      $stmt->execute(array("ticketStatus" => $dt['ticketStatus']));
+                                      $stmt = $db->prepare("SELECT statusName FROM status WHERE statusId = :status");
+                                      $stmt->execute(array("status" => $dt['status']));
                                       $tStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
@@ -301,184 +301,11 @@
 
               </div>
           </div>
-          <!-- /.Delayed Tickets -->
+          <!-- /.Delayed orders -->
           */
 
           ?>
-
-
-
-          <hr>
-
-          <!-- dashboard my tickets  -->
-          <div class="row">
-            <div class="col-md-12">
-              <h3><strong>MY TICKETS SUMMARY</strong></h3>
-            </div>
-          </div>
-
-          &nbsp;
-          <hr>
-
-          <?php
-
-          /**
-          * Fetch total tickets
-          */
-          $totalTicket = $db->query("SELECT count(*) FROM tickets WHERE ticketAssignedTo = $userId")->fetchColumn();
-
-          /**
-          * Fetch total complete tickets
-          */
-          $completeTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '3' AND ticketAssignedTo = $userId")->fetchColumn();
-
-          /**
-          * Fetch total in progress tickets
-          */
-          $pendingTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '2' AND ticketAssignedTo = $userId")->fetchColumn();
-
-          /**
-          * Fetch total not-started tickets
-          */
-          $waitingTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '1' AND ticketAssignedTo = $userId")->fetchColumn();
-
-
-          /**
-          * Fetch delayed tickets
-          */
-          $delayedTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '4' AND ticketAssignedTo = $userId")->fetchColumn();
-
-          /**
-          * Fetch delayed tickets
-          */
-          $blockedTickets = $db->query("SELECT count(*) FROM tickets WHERE ticketStatus = '5' AND ticketAssignedTo = $userId")->fetchColumn();
-
-          ?>
-
-
-          <div class="row">
-              <div class="col-lg-4 col-md-4">
-                  <div class="card">
-                      <div class="card-body">
-                          <div class="stat-widget-five">
-                              <div class="stat-icon dib flat-color-1">
-                                  <i class="pe-7s-box2"></i>
-                              </div>
-                              <div class="stat-content">
-                                  <div class="text-left dib">
-                                      <div class="stat-text"><span><?php echo $totalTicket; ?></span></div>
-                                      <div class="stat-heading">Total</div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              <div class="col-lg-4 col-md-4">
-                  <div class="card">
-                      <div class="card-body">
-                          <div class="stat-widget-five">
-                              <div class="stat-icon dib flat-color-2">
-                                  <i class="pe-7s-anchor"></i>
-                              </div>
-                              <div class="stat-content">
-                                  <div class="text-left dib">
-                                      <div class="stat-text"><span><?php echo $completeTickets; ?></span></div>
-                                      <div class="stat-heading">Complete</div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              <div class="col-lg-4 col-md-4">
-                  <div class="card">
-                      <div class="card-body">
-                          <div class="stat-widget-five">
-                              <div class="stat-icon dib flat-color-3">
-                                  <i class="pe-7s-alarm"></i>
-                              </div>
-                              <div class="stat-content">
-                                  <div class="text-left dib">
-                                      <div class="stat-text"><span><?php echo $pendingTickets; ?></span></div>
-                                      <div class="stat-heading">In-progress</div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-
-          <div class="row">
-            <div class="col-lg-4 col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="stat-widget-five">
-                            <div class="stat-icon dib flat-color-4">
-                                <i class="pe-7s-help1"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="text-left dib">
-                                    <div class="stat-text"><span><?php echo $waitingTickets; ?></span></div>
-                                    <div class="stat-heading">Not Started</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="stat-widget-five">
-                            <div class="stat-icon dib flat-color-4">
-                                <i class="pe-7s-refresh"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="text-left dib">
-                                    <div class="stat-text"><span><?php echo $delayedTickets; ?></span></div>
-                                    <div class="stat-heading">Delayed</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="stat-widget-five">
-                            <div class="stat-icon dib flat-color-4">
-                                <i class="pe-7s-attention"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="text-left dib">
-                                    <div class="stat-text"><span><?php echo $blockedTickets; ?></span></div>
-                                    <div class="stat-heading">Blocked Tickets</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-          </div>
-          <!-- /Widgets -->
-
-
-
-
 
         <div class="clearfix"></div>
-
-
-
-
-
-
 
 <?php require('footer.php'); ?>

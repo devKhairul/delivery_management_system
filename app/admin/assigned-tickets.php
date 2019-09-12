@@ -6,7 +6,6 @@ require_once('config/database.php');
 require_once('objects/Ticket.php');
 
 $userId = $_SESSION['userId'];
-$userDept = $_SESSION['userDept'];
 $userType = $_SESSION['userType'];
 
 // Initiate database connection
@@ -14,9 +13,9 @@ $database = new DB();
 $db = $database->getConnection();
 
 // Ticket object instance
-$ticket = new Ticket($db);
+$order = new Ticket($db);
 
-$data = $ticket->showAll($userId,$userType);
+$data = $order->showAll();
 
 
 /**
@@ -27,10 +26,10 @@ $data = $ticket->showAll($userId,$userType);
 
 if (isset($_POST['edit']))
 {
-  $ticketId = $_POST['ticketId'];
-  $ticketStatus = $_POST['ticketStatus'];
+  $orderId = $_POST['ticketId'];
+  $orderStatus = $_POST['ticketStatus'];
 
-  if ($ticket->edit($ticketId, $ticketStatus))
+  if ($order->edit($orderId, $orderStatus))
   {
     $success = 'true';
     header("location: http://192.168.0.232/app/user/tickets-list.php?msg=$success", true);
@@ -50,7 +49,7 @@ if (isset($_POST['edit']))
     <div class="animated fadeIn">
         <div class="row">
           <div class="col-md-12">
-              <h1><strong>Assigned Tickets</strong> </h1>
+              <h1><strong>Orders</strong> </h1>
           </div>
         </div>
         <hr>
@@ -80,68 +79,61 @@ if (isset($_POST['edit']))
                           <thead>
                               <tr>
                                   <th>Sl. </th>
-                                  <th>T. Number</th>
-                                  <th>Description</th>
-                                  <th>Requested By</th>
-                                  <th>Request Date</th>
-                                  <th>Deadline</th>
-                                  <th>Size</th>
-                                  <th>Assigned To</th>
+                                  <th>Order Number</th>
+                                  <th>Client Name</th>
+                                  <th>Address</th>
+                                  <th>Phone Number</th>
+                                  <th>Test Name</th>
+                                  <th>Lab Name</th>
+                                  <th>Collection Date</th>
                                   <th>Status</th>
+                                  <th>Remarks</th>
                                   <th>Action</th>
                               </tr>
                           </thead>
                           <tbody>
 
-                            <?php $sl=0; foreach ($data as $ticket) {
+                            <?php $sl=0; foreach ($data as $order) {
 
                               /**
                                * Get name of status
                                */
                               $stmt = $db->prepare("SELECT * FROM status WHERE statusId = :status");
-                              $stmt->execute(array(":status" => $ticket['ticketStatus']));
-                              $tStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                              $stmt->execute(array(":status" => $order['status']));
+                              $orderStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
                               /**
                                * Get name of task size
                                */
-                              $stmt = $db->prepare("SELECT * FROM tasks_size WHERE tasksSizeId = :ticketSize");
-                              $stmt->execute(array(":ticketSize" => $ticket['ticketSize']));
-                              $tSize = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                              /**
-                               * Get name of assigned user
-                               */
-                              $stmt = $db->prepare("SELECT * FROM users WHERE userId = :assignedTo");
-                              $stmt->execute(array(":assignedTo" => $ticket['ticketAssignedTo']));
-                              $tAssign = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+                              $stmt = $db->prepare("SELECT * FROM labs WHERE labId = :labId");
+                              $stmt->execute(array(":labId" => $order['labName']));
+                              $labName = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                               ?>
                               <tr>
                                   <td><?php echo ++$sl; ?></td>
-                                  <td><?php echo $ticket['ticketNumber']; ?></td>
-                                  <td><?php echo $ticket['ticketDescription']; ?></td>
-                                  <td><?php echo $ticket['ticketRequestedBy']; ?></td>
-                                  <td><?php echo $ticket['ticketReqDate']; ?></td>
-                                  <td><?php echo $ticket['ticketDeadline']; ?></td>
+                                  <td><?php echo $order['orderNumber']; ?></td>
+                                  <td><?php echo $order['clientName']; ?></td>
+                                  <td><?php echo $order['address']; ?></td>
+                                  <td><?php echo $order['phoneNumber']; ?></td>
+                                  <td><?php echo $order['testName']; ?></td>
 
-                                  <td><?php foreach ($tSize as $t) {
-                                    echo $t['tasksSizeName'];
+                                  <td><?php foreach ($labName as $t) {
+                                    echo $t['labName'];
                                   } ?></td>
 
-                                  <td><?php foreach ($tAssign as $name) {
-                                    echo $name['userName'];
-                                  } ?></td>
+                                  <td><?php echo $order['collectionDate']; ?></td>
 
-                                  <td><?php foreach ($tStatus as $s) {
+                                  <td><?php foreach ($orderStatus as $s) {
                                     echo $s['statusName'];
                                   } ?></td>
+
+                                  <td><?php echo $order['remarks']; ?></td>
+
+
                                   <td>
-
-                                    <input type="button" name="view" value="Details" id="<?php echo $ticket['ticketId']; ?>" class="btn btn-sm btn-info view_data"></input>
-
+                                    <input type="button" name="view" value="Details" id="<?php echo $order['orderId']; ?>" class="btn btn-sm btn-info view_data"></input>
                                   </td>
                               </tr>
                             <?php } ?>
@@ -166,7 +158,7 @@ if (isset($_POST['edit']))
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"><h4>Ticket Details</h4> </h5>
+        <h5 class="modal-title" id="exampleModalLabel"><h4>Order Details</h4> </h5>
       </div>
       <div class="modal-body" id="ticket_detail">
 

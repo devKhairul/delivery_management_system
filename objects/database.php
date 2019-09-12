@@ -12,7 +12,7 @@ class Database
 
     try
     {
-      $this->conn = new PDO("mysql:host=localhost;dbname=sf_ticket", "$this->username", "$this->password");
+      $this->conn = new PDO("mysql:host=localhost;dbname=sbf-tracker", "$this->username", "$this->password");
       $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     catch (PDOException $e)

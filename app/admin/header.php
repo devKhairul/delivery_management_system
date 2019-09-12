@@ -72,35 +72,28 @@ $userType = $_SESSION['userType'];
                 <li class="menu-title">FEATURES</li><!-- /.menu-title -->
 
                 <li class="active">
-                    <a href="index.php"><i class="menu-icon fa fa-home"></i>HOME </a>
+                    <a href="index.php"><i class="menu-icon fa fa-home"></i>Home </a>
                 </li>
 
                 <li>
-                    <a href="user.php"> <i class="menu-icon fa fa-users"></i>USERS </a>
+                    <a href="user.php"> <i class="menu-icon fa fa-users"></i>Users </a>
                 </li>
-
-                <?php if ($userType == 'Supervisor'): ?>
-                  <li>
-                      <a href="tickets.php"> <i class="menu-icon fa fa-file"></i>ASSIGN TICKET </a>
-                  </li>
-                <?php endif; ?>
 
                 <li>
-                    <a href="assigned-tickets.php"> <i class="menu-icon fa fa-list-alt"></i>ASSIGNED TICKETS </a>
+                    <a href="tickets.php"> <i class="menu-icon fa fa-file"></i>Place Order </a>
                 </li>
 
-                <?php if ($userType == 'Supervisor'): ?>
-                  <li>
-                      <a href="my-tickets.php"> <i class="menu-icon fa fa-list-alt"></i>MY TICKETS </a>
-                  </li>
-                <?php endif; ?>
+                <li>
+                    <a href="assigned-tickets.php"> <i class="menu-icon fa fa-list-alt"></i>Order List </a>
+                </li>
 
-                <?php if ($userType == 'Administrator' || 'Supervisor'): ?>
-                  <li>
-                      <a href="reports.php"> <i class="menu-icon fa fa-list-alt"></i>REPORTS </a>
-                  </li>
-                <?php endif; ?>
+                <li>
+                  <a href="my-tickets.php"> <i class="menu-icon fa fa-list-alt"></i>My Orders </a>
+                </li>
 
+                <li>
+                    <a href="reports.php"> <i class="menu-icon fa fa-list-alt"></i>REPORTS </a>
+                </li>
 
 
 
